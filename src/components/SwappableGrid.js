@@ -1,9 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, {Component} from 'react';
 // import {Platform, StyleSheet, Text, View, Dimensions, Animated, PanResponder, Image, TouchableHighlight, ImageBackground} from 'react-native';
 import {StyleSheet, Dimensions, Animated} from 'react-native';
@@ -16,12 +10,12 @@ import {BEAN_OBJS} from '../lib/Images';
 import {TileData} from '../lib/TileData';
 import Tile from './Tile';
 
-export default class SwappableGrid extends Component<{}> {
+export default class SwappableGrid extends Component {
   state = {
     tileDataSource: this.initializeDataSource(),
   };
 
-  swap(i, j, dx, dy) {
+  swap = (i, j, dx, dy) => {
     const swapStarter = this.state.tileDataSource[i][j];
     const swapEnder = this.state.tileDataSource[i + dx][j + dy];
 
@@ -47,7 +41,7 @@ export default class SwappableGrid extends Component<{}> {
         this.processMatches(allMatches);
       }
     });
-  }
+  };
 
   processMatches(matches) {
     let nextMatches = [];
@@ -102,32 +96,29 @@ export default class SwappableGrid extends Component<{}> {
     let i = Math.round((initialGestureX - this.gridOrigin[0] - 0.5 * TILE_WIDTH) / TILE_WIDTH);
     let j = Math.round((initialGestureY - this.gridOrigin[1] - 0.5 * TILE_WIDTH) / TILE_WIDTH);
 
-    switch (gestureName) {
-      case SWIPE_UP:
-        this.swap(i, j, 0, -1);
-        break;
-      case SWIPE_DOWN:
-        this.swap(i, j, 0, 1);
-        break;
-      case SWIPE_LEFT:
-        this.swap(i, j, -1, 0);
-        break;
-      case SWIPE_RIGHT:
-        this.swap(i, j, 1, 0);
-        break;
+    if (i > -1 && j > -1 && i < 5 && j < 5) {
+      switch (gestureName) {
+        case SWIPE_UP:
+          if (j > 0) this.swap(i, j, 0, -1);
+          break;
+        case SWIPE_DOWN:
+          if (j < 4) this.swap(i, j, 0, 1);
+          break;
+        case SWIPE_LEFT:
+          if (i > 0) this.swap(i, j, -1, 0);
+          break;
+        case SWIPE_RIGHT:
+          if (i < 4) this.swap(i, j, 1, 0);
+          break;
+      }
     }
   }
 
   // SwappableGrid.js
   renderTiles(tileData) {
     console.log('Render Tiles Called');
-    let tiles = [];
-    tileData.forEach((row, i) => {
-      let rows = row.forEach((e, j) => {
-        // e is a singular TileData class.
-        tiles.push(<Tile location={e.location} scale={e.scale} key={e.key} img={e.imgObj.image} />);
-      });
-    });
+    const tiles = tileData.map(row => row.map(e => <Tile location={e.location} scale={e.scale} key={e.key} img={e.imgObj.image} />));
+
     return tiles;
   }
 
@@ -150,7 +141,16 @@ export default class SwappableGrid extends Component<{}> {
       });
       return dataRows;
     });
-    return tileData;
+
+    let allMatches = getAllMatches(tileData);
+    console.log(allMatches);
+    // 초기 배치 시 3개 일치하는 블록이 없을때 titleData 리턴
+    if (!allMatches.length) {
+      console.log('최종이다.');
+      return tileData;
+    }
+
+    return this.initializeDataSource();
   }
 
   UNSAFE_componentWillMount() {

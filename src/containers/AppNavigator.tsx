@@ -1,6 +1,6 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import GameScreen from '../screens/GameScreen';
+import GameScreen from '../screens/MusicPang.screen';
 
 const Stack = createStackNavigator();
 

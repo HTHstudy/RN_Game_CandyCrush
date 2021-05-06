@@ -1,9 +1,9 @@
 import React from 'react';
-// import {View, Text, TouchableHighlight, Button, StyleSheet, Image, ImageBackground, Animated, Dimensions} from 'react-native';
-import {StyleSheet, ImageBackground, Dimensions} from 'react-native';
-import SwappableGrid from '../components/SwappableGrid';
+import {StyleSheet, ImageBackground, Dimensions, Pressable} from 'react-native';
+// import SwappableGrid from '../components/SwappableGrid';
+import SwappableGrid from '../components/SwappableGrid2';
 
-import Images from '../lib/Images';
+// import Images from '../lib/Images';
 
 let playButton = require('../assets/PlayButton.png');
 
