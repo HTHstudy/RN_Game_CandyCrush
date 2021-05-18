@@ -23,11 +23,3 @@ export function TileData(imgObj: ImageObjType, key: number): TileDataType {
     scale: new Animated.Value(1),
   }
 }
-
-// export function TileData(this: TileDataType, imgObj, key) {
-//   this.key = key
-//   this.markedAsMatch = false
-//   this.location = new Animated.ValueXY()
-//   this.imgObj = imgObj
-//   this.scale = new Animated.Value(1)
-// }

@@ -7,7 +7,7 @@ import {TileData, TileDataType} from '../lib/TileData'
 import Tile from './Tile'
 import {ROW, COLUMN} from '../lib/spec'
 
-// react-native-swipe-gestures type
+// react-native-swipe-gestures swipeDirections type
 export enum swipeDirections {
   SWIPE_UP = 'SWIPE_UP',
   SWIPE_DOWN = 'SWIPE_DOWN',
@@ -177,11 +177,6 @@ const SwappableGrid = ({setMoveCount, setScore}: Props) => {
     <>
       <GestureRecognizer onLayout={onLayout} config={config} style={styles.gestureContainer} onSwipe={(direction, state) => onSwipe(direction, state)}>
         {renderTiles(tileDataSource)}
-        {/* {!!blockScreen.length && (
-          <View style={styles.blindView}>
-            <Text>{blockScreen}</Text>
-          </View>
-        )} */}
       </GestureRecognizer>
       {!!blockScreen.length && (
         <View style={styles.blindView}>
@@ -193,7 +188,6 @@ const SwappableGrid = ({setMoveCount, setScore}: Props) => {
 }
 
 const initializeDataSource = (): TileDataType[][] => {
-  // Grid that contains the keys that will be assigned to each tile via map
   let keys = [
     [0, 1, 2],
     [3, 4, 5],
@@ -206,11 +200,10 @@ const initializeDataSource = (): TileDataType[][] => {
     [24, 25, 26],
   ]
 
-  var tileData = keys.map((row, i) => {
-    let dataRows = row.map((key, j) => {
+  var tileData = keys.map(row => {
+    let dataRows = row.map(key => {
       let int = getRandomInt(7)
       let randomBeanObj = BEAN_OBJS[int]
-      // let data = new TileData(randomBeanObj, key)
       let data = TileData(randomBeanObj, key)
       return data
     })
@@ -230,23 +223,13 @@ let Window = Dimensions.get('window')
 let windowSpan = Math.min(Window.width, Window.height)
 export const TILE_WIDTH = windowSpan / 6
 
-let colored = false
-
-let blue = colored ? '#3c44d8' : undefined
-// let red = colored ? '#f24646' : undefined;
-// let yellow = colored ? '#faff7f' : undefined;
-let green = colored ? '#168e3a' : undefined
-// let orange = colored ? '#ea0e62' : undefined;
-// let pink = colored ? '#ff51f3' : undefined;
-// let white = '#ffffff';
-
 let styles = StyleSheet.create({
   gestureContainer: {
     flex: 1,
     width: TILE_WIDTH * ROW,
     height: TILE_WIDTH * COLUMN,
     position: 'absolute',
-    backgroundColor: green,
+    // backgroundColor: 'green',
   },
   blindView: {
     position: 'absolute',
