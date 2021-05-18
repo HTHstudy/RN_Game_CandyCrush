@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {StyleSheet, Dimensions, Animated, LayoutChangeEvent, View, Text, Easing} from 'react-native'
+import {StyleSheet, Dimensions, Animated, LayoutChangeEvent, View, Text, Easing, PanResponderGestureState} from 'react-native'
 import GestureRecognizer from 'react-native-swipe-gestures'
 import {getRandomInt, getAllMatches, markAsMatch, condenseColumns, flattenArrayToPairs, findMoves, sleep} from '../lib/GridApi'
 import {BEAN_OBJS} from '../lib/Images'
@@ -41,7 +41,7 @@ const SwappableGrid = ({setMoveCount, setScore}: Props) => {
       } else {
         if (!findMoves(tileDataSource)) {
           await sleep(500)
-          console.warn('더 이상 움직일 수 있는 타일이 없으므로 아무 타일이나 스왑하면 게임이 초기화 됩니다.')
+          console.error('더 이상 움직일 수 있는 타일이 없으므로 아무 타일이나 스왑하면 게임이 초기화 됩니다.')
         }
       }
     })()
@@ -60,11 +60,11 @@ const SwappableGrid = ({setMoveCount, setScore}: Props) => {
           toValue: {x: TILE_WIDTH * i, y: TILE_WIDTH * j},
           duration: 500,
           useNativeDriver: true,
-          // easing: Easing.inOut(Easing.elastic(1)),
+          easing: Easing.bezier(0.85, 0, 0.15, 1),
         }).start(() => {
           if (!!blockScreen.length) {
             // 가끔 애니메이션 완료 이후에 이미지가 바뀌는 현상이 있는데 딜레이로 해결하는게 맞는가?
-            // sleep(250).then(() => setBlockScreen(''))
+            // sleep(2500).then(() => setBlockScreen(''))
             setBlockScreen('')
           }
         })
@@ -76,13 +76,13 @@ const SwappableGrid = ({setMoveCount, setScore}: Props) => {
     gridOrigin.current = [event.nativeEvent.layout.x, event.nativeEvent.layout.y]
   }
 
-  const renderTiles = tileData => {
-    const tiles = tileData.map(row => row.map(e => <Tile location={e.location} scale={e.scale} key={e.key} img={e.imgObj.image} />))
+  const renderTiles = (tileData: TileDataType[][]) => {
+    const tiles = tileData.map(row => row.map(e => <Tile location={e.location} scale={e.scale} key={e.key} img={e.imgObj?.image} />))
 
     return tiles
   }
 
-  const onSwipe = (gestureName, gestureState) => {
+  const onSwipe = (gestureName: string, gestureState: PanResponderGestureState) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections
 
     let initialGestureX = gestureState.x0
@@ -109,7 +109,7 @@ const SwappableGrid = ({setMoveCount, setScore}: Props) => {
     }
   }
 
-  const swap = (i, j, dx, dy) => {
+  const swap = (i: number, j: number, dx: number, dy: number) => {
     const swapStarter = tileDataSource[i][j]
     const swapEnder = tileDataSource[i + dx][j + dy]
     tileDataSource[i][j] = swapEnder
@@ -149,7 +149,7 @@ const SwappableGrid = ({setMoveCount, setScore}: Props) => {
     })
   }
 
-  const processMatches = matches => {
+  const processMatches = (matches: number[][][]) => {
     setTileDataSource(state => {
       let newTileDataSource = state.slice()
       markAsMatch(matches, newTileDataSource)
@@ -160,7 +160,7 @@ const SwappableGrid = ({setMoveCount, setScore}: Props) => {
     })
   }
 
-  const recolorMatches = tileData => {
+  const recolorMatches = (tileData: TileDataType[][]) => {
     tileData.forEach(row => {
       row.forEach(e => {
         if (e.markedAsMatch === true) {
@@ -174,14 +174,21 @@ const SwappableGrid = ({setMoveCount, setScore}: Props) => {
   }
 
   return (
-    <GestureRecognizer onLayout={onLayout} config={config} style={styles.gestureContainer} onSwipe={(direction, state) => onSwipe(direction, state)}>
-      {renderTiles(tileDataSource)}
+    <>
+      <GestureRecognizer onLayout={onLayout} config={config} style={styles.gestureContainer} onSwipe={(direction, state) => onSwipe(direction, state)}>
+        {renderTiles(tileDataSource)}
+        {/* {!!blockScreen.length && (
+          <View style={styles.blindView}>
+            <Text>{blockScreen}</Text>
+          </View>
+        )} */}
+      </GestureRecognizer>
       {!!blockScreen.length && (
         <View style={styles.blindView}>
           <Text>{blockScreen}</Text>
         </View>
       )}
-    </GestureRecognizer>
+    </>
   )
 }
 
@@ -242,6 +249,7 @@ let styles = StyleSheet.create({
     backgroundColor: green,
   },
   blindView: {
+    position: 'absolute',
     width: TILE_WIDTH * ROW,
     height: TILE_WIDTH * COLUMN,
     backgroundColor: 'white',

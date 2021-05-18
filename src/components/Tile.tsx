@@ -1,7 +1,14 @@
 import React from 'react'
 import {StyleSheet, Dimensions, Animated} from 'react-native'
 
-const Tile = props => {
+interface tileProps {
+  location: Animated.ValueXY
+  scale: Animated.Value
+  key: number
+  img: number
+}
+
+const Tile = (props: tileProps) => {
   return <Animated.Image source={props.img} style={[styles.tile, {transform: [{translateX: props.location.x}, {translateY: props.location.y}, {scale: props.scale}]}]} />
 }
 

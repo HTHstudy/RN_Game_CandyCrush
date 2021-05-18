@@ -1,6 +1,7 @@
 import {TILE_WIDTH} from '../components/SwappableGrid'
 import {ROW, COLUMN} from './spec'
 import {TileDataType} from '../lib/TileData'
+import {ImageObjType} from './Images'
 
 export const findMoves = (tileData: TileDataType[][]) => {
   const copy = tileData.slice()
@@ -38,17 +39,17 @@ export const findMoves = (tileData: TileDataType[][]) => {
   return canMove
 }
 
-export const flattenArrayToPairs = (arr: number[][][] | number[][] | number[]) => {
+export const flattenArrayToPairs = (arr: any): number[] => {
   let flatterArray: number[] = []
 
-  arr.map((row, i) => {
-    row.map((e, j) => {
+  arr.map((row: any) => {
+    row.map((e: any) => {
       flatterArray.push(e)
     })
   })
 
   if (Array.isArray(flatterArray[0]) === false) {
-    return arr
+    return arr as number[]
   }
 
   return flattenArrayToPairs(flatterArray)
@@ -58,7 +59,7 @@ export const getRandomInt = (max: number) => {
   return Math.floor(Math.random() * Math.floor(max))
 }
 
-export const isMatch = (objOne, objTwo) => {
+export const isMatch = (objOne: ImageObjType | null, objTwo: ImageObjType | null) => {
   if (objOne != null && objTwo != null) {
     if (objOne.image === objTwo.image) {
       return true
@@ -156,12 +157,11 @@ export const getAllMatches = (tileData: TileDataType[][]) => {
   return [...rowMatches, ...colMatches]
 }
 
-export const markAsMatch = (matches, tileData) => {
+export const markAsMatch = (matches: number[][][], tileData: TileDataType[][]) => {
   matches.forEach(match => {
     match.forEach(e => {
       let i = e[0]
       let j = e[1]
-      // console.log('i,j', i, j)
       tileData[i][j].markedAsMatch = true
     })
   })
