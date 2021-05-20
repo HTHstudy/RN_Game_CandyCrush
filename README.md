@@ -4,7 +4,7 @@
 
 ### 데모 영상 링크
 
-https://youtu.be/GjM9r_QxJcQ
+https://youtu.be/vwyiWd_FKLE
 
 ### 구현 사항
 
